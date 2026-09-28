@@ -119,10 +119,12 @@ public class DefaultDisplayViewingScreen extends AbstractDisplayViewingScreen {
     @Override
     public boolean keyPressed(KeyEvent event) {
         if (ConfigObject.getInstance().getNextPageKeybind().matchesKey(event.key(), event.scancode())) {
+        if (ConfigObject.getInstance().getNextPageKeybind().matchesKey(event.key(), event.keycode())) {
             if (recipeNext.isEnabled())
                 recipeNext.onClick();
             return recipeNext.isEnabled();
         } else if (ConfigObject.getInstance().getPreviousPageKeybind().matchesKey(event.key(), event.scancode())) {
+        } else if (ConfigObject.getInstance().getPreviousPageKeybind().matchesKey(event.key(), event.keycode())) {
             if (recipeBack.isEnabled())
                 recipeBack.onClick();
             return recipeBack.isEnabled();
@@ -363,6 +365,7 @@ public class DefaultDisplayViewingScreen extends AbstractDisplayViewingScreen {
     public boolean keyReleased(KeyEvent event) {
         ModifierKeyCode export = ConfigObject.getInstance().getExportImageKeybind();
         if (export.matchesKey(event.key(), event.scancode())) {
+        if (export.matchesKey(event.key(), event.keycode())) {
             if (checkExportDisplays()) return true;
         }
         return super.keyReleased(event);

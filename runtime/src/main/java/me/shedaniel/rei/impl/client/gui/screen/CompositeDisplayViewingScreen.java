@@ -340,6 +340,7 @@ public class CompositeDisplayViewingScreen extends AbstractDisplayViewingScreen 
     @Override
     public boolean keyPressed(KeyEvent event) {
         if (ConfigObject.getInstance().getNextPageKeybind().matchesKey(event.key(), event.scancode())) {
+        if (ConfigObject.getInstance().getNextPageKeybind().matchesKey(event.key(), event.keycode())) {
             if (categoryMap.get(categories.get(selectedCategoryIndex)).size() > 1) {
                 selectedRecipeIndex++;
                 if (selectedRecipeIndex >= categoryMap.get(categories.get(selectedCategoryIndex)).size())
@@ -349,6 +350,7 @@ public class CompositeDisplayViewingScreen extends AbstractDisplayViewingScreen 
             }
             return false;
         } else if (ConfigObject.getInstance().getPreviousPageKeybind().matchesKey(event.key(), event.scancode())) {
+        } else if (ConfigObject.getInstance().getPreviousPageKeybind().matchesKey(event.key(), event.keycode())) {
             if (categoryMap.get(categories.get(selectedCategoryIndex)).size() > 1) {
                 selectedRecipeIndex--;
                 if (selectedRecipeIndex < 0)

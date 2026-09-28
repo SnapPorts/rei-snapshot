@@ -152,6 +152,7 @@ public class OverlaySearchField extends TextFieldWidget implements TextFieldWidg
     
     private void drawHint(GuiGraphics graphics, int mouseX, int mouseY) {
         boolean mouseDown = GLFW.glfwGetMouseButton(Minecraft.getInstance().getWindow().handle(), GLFW.GLFW_MOUSE_BUTTON_LEFT) != 0;
+        boolean mouseDown = Minecraft.getInstance().mouseHandler.isLeftPressed();
         boolean clicking = false;
         if (mouseDown != previouslyClicking) {
             previouslyClicking = mouseDown;
@@ -339,6 +340,7 @@ public class OverlaySearchField extends TextFieldWidget implements TextFieldWidg
     @Override
     public boolean charTyped(CharacterEvent event) {
         if (isMain && System.currentTimeMillis() - keybindFocusTime < 1000 && keybindFocusKey != -1 && InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), keybindFocusKey)) {
+        if (isMain && System.currentTimeMillis() - keybindFocusTime < 1000 && keybindFocusKey != -1 && InputConstants.isKeyDown(keybindFocusKey)) {
             keybindFocusTime = -1;
             keybindFocusKey = -1;
             return true;

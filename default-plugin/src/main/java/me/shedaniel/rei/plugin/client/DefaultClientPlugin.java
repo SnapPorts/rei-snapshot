@@ -110,8 +110,10 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.world.item.enchantment.Repairable;
 import net.minecraft.world.level.GameType;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.ComposterBlock;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.WeatheringCopper;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
@@ -272,6 +274,11 @@ public class DefaultClientPlugin implements REIClientPlugin, BuiltinClientPlugin
                 registry.addWorkstations(STRIPPING, EntryStacks.of(item));
                 registry.addWorkstations(WAX_SCRAPING, EntryStacks.of(item));
                 registry.addWorkstations(OXIDATION_SCRAPING, EntryStacks.of(item));
+        for (EntryStack<?> stack : EntryIngredients.ofItemTag(ItemTags.AXES)) {
+            if (axes.add(stack.<ItemStack>castValue().getItem())) {
+                registry.addWorkstations(STRIPPING, stack);
+                registry.addWorkstations(WAX_SCRAPING, stack);
+                registry.addWorkstations(OXIDATION_SCRAPING, stack);
             }
             if (item instanceof HoeItem && hoes.add(item)) {
                 registry.addWorkstations(TILLING, EntryStacks.of(item));
@@ -280,6 +287,7 @@ public class DefaultClientPlugin implements REIClientPlugin, BuiltinClientPlugin
                 registry.addWorkstations(PATHING, EntryStacks.of(item));
             }
         });
+        }
         for (EntryStack<?> stack : getTag(Identifier.fromNamespaceAndPath("c", "axes"))) {
             if (axes.add(stack.<ItemStack>castValue().getItem())) {
                 registry.addWorkstations(STRIPPING, stack);
@@ -287,8 +295,14 @@ public class DefaultClientPlugin implements REIClientPlugin, BuiltinClientPlugin
                 registry.addWorkstations(OXIDATION_SCRAPING, stack);
             }
         }
+        for (EntryStack<?> stack : EntryIngredients.ofItemTag(ItemTags.HOES)) {
+            if (hoes.add(stack.<ItemStack>castValue().getItem())) registry.addWorkstations(TILLING, stack);
+        }
         for (EntryStack<?> stack : getTag(Identifier.fromNamespaceAndPath("c", "hoes"))) {
             if (hoes.add(stack.<ItemStack>castValue().getItem())) registry.addWorkstations(TILLING, stack);
+        }
+        for (EntryStack<?> stack : EntryIngredients.ofItemTag(ItemTags.SHOVELS)) {
+            if (shovels.add(stack.<ItemStack>castValue().getItem())) registry.addWorkstations(PATHING, stack);
         }
         for (EntryStack<?> stack : getTag(Identifier.fromNamespaceAndPath("c", "shovels"))) {
             if (shovels.add(stack.<ItemStack>castValue().getItem())) registry.addWorkstations(PATHING, stack);
@@ -373,17 +387,26 @@ public class DefaultClientPlugin implements REIClientPlugin, BuiltinClientPlugin
 //        }
         if (ComposterBlock.COMPOSTABLES.isEmpty()) {
             ComposterBlock.bootStrap();
+        List<Item> compostableItems = new ArrayList<>();
+        for (Item item : BuiltInRegistries.ITEM) {
+            if (item.components().has(DataComponents.COMPOSTABLE)) {
+                compostableItems.add(item);
+            }
         }
         Iterator<List<EntryIngredient>> iterator = Iterators.partition(ComposterBlock.COMPOSTABLES.object2FloatEntrySet().stream().sorted(Map.Entry.comparingByValue()).map(entry -> EntryIngredients.of(entry.getKey())).iterator(), 35);
+        Iterator<List<EntryIngredient>> iterator = Iterators.partition(compostableItems.stream().map(EntryIngredients::of).iterator(), 35);
         while (iterator.hasNext()) {
             List<EntryIngredient> entries = iterator.next();
             registry.add(new DefaultCompostingDisplay(entries, Collections.singletonList(EntryIngredients.of(new ItemStack(Items.BONE_MEAL)))));
         }
         DummyAxeItem.getStrippedBlocksMap().entrySet().stream().sorted(Comparator.comparing(b -> BuiltInRegistries.BLOCK.getKey(b.getKey()))).forEach(set -> {
+        getStrippedBlocksMap().entrySet().stream().sorted(Comparator.comparing(b -> BuiltInRegistries.BLOCK.getKey(b.getKey()))).forEach(set -> {
             registry.add(new DefaultStrippingDisplay(EntryStacks.of(set.getKey()), EntryStacks.of(set.getValue())));
         });
         DummyShovelItem.getPathBlocksMap().entrySet().stream().sorted(Comparator.comparing(b -> BuiltInRegistries.BLOCK.getKey(b.getKey()))).forEach(set -> {
             registry.add(new DefaultPathingDisplay(EntryStacks.of(set.getKey()), EntryStacks.of(set.getValue().getBlock())));
+        getPathBlocksMap().entrySet().stream().sorted(Comparator.comparing(b -> BuiltInRegistries.BLOCK.getKey(b.getKey()))).forEach(set -> {
+            registry.add(new DefaultPathingDisplay(EntryStacks.of(set.getKey()), EntryStacks.of(set.getValue())));
         });
         registry.add(new DefaultBeaconBaseDisplay(Collections.singletonList(EntryIngredients.ofItemTag(BlockTags.BEACON_BASE_BLOCKS)), Collections.emptyList()));
         registry.add(new DefaultBeaconPaymentDisplay(Collections.singletonList(EntryIngredients.ofItemTag(ItemTags.BEACON_PAYMENT_ITEMS)), Collections.emptyList()));
@@ -438,6 +461,7 @@ public class DefaultClientPlugin implements REIClientPlugin, BuiltinClientPlugin
                 }
             }
         } else {
+        if (!Platform.isFabric()) {
             registerForgePotions(registry, this);
         }
         
@@ -568,6 +592,39 @@ public class DefaultClientPlugin implements REIClientPlugin, BuiltinClientPlugin
     public static class DummyShovelItem extends ShovelItem {
         public DummyShovelItem(ToolMaterial material, float damage, float speed, Properties properties) {
             super(material, damage, speed, properties);
+    public static Map<Block, Block> getStrippedBlocksMap() {
+        Map<Block, Block> map = new HashMap<>();
+        addStripped(map, Blocks.OAK_LOG, Blocks.STRIPPED_OAK_LOG);
+        addStripped(map, Blocks.OAK_WOOD, Blocks.STRIPPED_OAK_WOOD);
+        addStripped(map, Blocks.SPRUCE_LOG, Blocks.STRIPPED_SPRUCE_LOG);
+        addStripped(map, Blocks.SPRUCE_WOOD, Blocks.STRIPPED_SPRUCE_WOOD);
+        addStripped(map, Blocks.BIRCH_LOG, Blocks.STRIPPED_BIRCH_LOG);
+        addStripped(map, Blocks.BIRCH_WOOD, Blocks.STRIPPED_BIRCH_WOOD);
+        addStripped(map, Blocks.JUNGLE_LOG, Blocks.STRIPPED_JUNGLE_LOG);
+        addStripped(map, Blocks.JUNGLE_WOOD, Blocks.STRIPPED_JUNGLE_WOOD);
+        addStripped(map, Blocks.ACACIA_LOG, Blocks.STRIPPED_ACACIA_LOG);
+        addStripped(map, Blocks.ACACIA_WOOD, Blocks.STRIPPED_ACACIA_WOOD);
+        addStripped(map, Blocks.DARK_OAK_LOG, Blocks.STRIPPED_DARK_OAK_LOG);
+        addStripped(map, Blocks.DARK_OAK_WOOD, Blocks.STRIPPED_DARK_OAK_WOOD);
+        addStripped(map, Blocks.PALE_OAK_LOG, Blocks.STRIPPED_PALE_OAK_LOG);
+        addStripped(map, Blocks.PALE_OAK_WOOD, Blocks.STRIPPED_PALE_OAK_WOOD);
+        addStripped(map, Blocks.POPLAR_LOG, Blocks.STRIPPED_POPLAR_LOG);
+        addStripped(map, Blocks.POPLAR_WOOD, Blocks.STRIPPED_POPLAR_WOOD);
+        addStripped(map, Blocks.MANGROVE_LOG, Blocks.STRIPPED_MANGROVE_LOG);
+        addStripped(map, Blocks.MANGROVE_WOOD, Blocks.STRIPPED_MANGROVE_WOOD);
+        addStripped(map, Blocks.CHERRY_LOG, Blocks.STRIPPED_CHERRY_LOG);
+        addStripped(map, Blocks.CHERRY_WOOD, Blocks.STRIPPED_CHERRY_WOOD);
+        addStripped(map, Blocks.BAMBOO_BLOCK, Blocks.STRIPPED_BAMBOO_BLOCK);
+        addStripped(map, Blocks.CRIMSON_STEM, Blocks.STRIPPED_CRIMSON_STEM);
+        addStripped(map, Blocks.CRIMSON_HYPHAE, Blocks.STRIPPED_CRIMSON_HYPHAE);
+        addStripped(map, Blocks.WARPED_STEM, Blocks.STRIPPED_WARPED_STEM);
+        addStripped(map, Blocks.WARPED_HYPHAE, Blocks.STRIPPED_WARPED_HYPHAE);
+        return map;
+    }
+
+    private static void addStripped(Map<Block, Block> map, Block unstripped, Block stripped) {
+        if (unstripped != null && stripped != null) {
+            map.put(unstripped, stripped);
         }
         
         public static Map<Block, BlockState> getPathBlocksMap() {
@@ -578,10 +635,19 @@ public class DefaultClientPlugin implements REIClientPlugin, BuiltinClientPlugin
     public static class DummyAxeItem extends AxeItem {
         public DummyAxeItem(ToolMaterial material, float damage, float speed, Properties properties) {
             super(material, damage, speed, properties);
+
+    public static Map<Block, Block> getPathBlocksMap() {
+        Map<Block, Block> map = new HashMap<>();
+        Block path = Blocks.DIRT_PATH;
+        for (Block b : List.of(Blocks.DIRT, Blocks.GRASS_BLOCK, Blocks.COARSE_DIRT, Blocks.ROOTED_DIRT, Blocks.MYCELIUM, Blocks.PODZOL)) {
+            if (b != null && path != null) {
+                map.put(b, path);
+            }
         }
         
         public static Map<Block, Block> getStrippedBlocksMap() {
             return STRIPPABLES;
         }
+        return map;
     }
 }

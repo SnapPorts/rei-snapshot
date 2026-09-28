@@ -273,6 +273,8 @@ public final class ClientRecipeFallback {
                     CompletableFuture::completedFuture, Runnable::run).join();
             // reload() only parses recipes; the recipe-display index is built separately by
             // finalizeRecipeLoading, exactly as the server does before sending the recipe book.
+            // In 26.4, RecipeManager parses recipes directly from the registryAccess provider.
+            // finalizeRecipeLoading builds the recipe-display index.
             recipeManager.finalizeRecipeLoading(enabledFeatures);
 
             recipeManager.getRecipes().forEach(holder ->

@@ -499,6 +499,7 @@ public abstract class AbstractDisplayViewingScreen extends REIScreen implements 
         if (super.keyPressed(event) || (getOverlay().keyPressed(event) && handleFocuses()))
             return true;
         if (ConfigObject.getInstance().getPreviousScreenKeybind().matchesKey(event.key(), event.scancode())) {
+        if (ConfigObject.getInstance().getPreviousScreenKeybind().matchesKey(event.key(), event.keycode())) {
             if (REIRuntimeImpl.getInstance().hasLastDisplayScreen()) {
                 minecraft.setScreenAndShow(REIRuntimeImpl.getInstance().getLastDisplayScreen());
             } else {

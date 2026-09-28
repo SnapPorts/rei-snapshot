@@ -280,6 +280,7 @@ public class REIConfigScreen extends me.shedaniel.rei.impl.client.gui.screen.REI
             if (this.partialKeycode.isUnknown()) {
                 this.partialKeycode.setKeyCode(InputConstants.Type.MOUSE.getOrCreate(event.button()));
             } else if (this.partialKeycode.getType() == InputConstants.Type.KEYSYM) {
+            } else if (this.partialKeycode.getType() == InputConstants.Type.KEYBOARD) {
                 Modifier modifier = this.partialKeycode.getModifier();
                 int code = this.partialKeycode.getKeyCode().getValue();
                 if (Util.getPlatform() == Util.OS.OSX ? code == 343 || code == 347 : code == 341 || code == 345) {
@@ -360,6 +361,7 @@ public class REIConfigScreen extends me.shedaniel.rei.impl.client.gui.screen.REI
                 } else {
                     Modifier modifier = this.partialKeycode.getModifier();
                     if (this.partialKeycode.getType() == InputConstants.Type.KEYSYM) {
+                    if (this.partialKeycode.getType() == InputConstants.Type.KEYBOARD) {
                         int code = this.partialKeycode.getKeyCode().getValue();
                         if (Util.getPlatform() == Util.OS.OSX ? code == 343 || code == 347 : code == 341 || code == 345) {
                             this.partialKeycode.setModifier(Modifier.of(modifier.hasAlt(), true, modifier.hasShift()));

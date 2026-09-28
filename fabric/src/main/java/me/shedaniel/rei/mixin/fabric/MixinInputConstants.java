@@ -37,6 +37,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class MixinInputConstants {
     @Inject(method = "isKeyDown", at = @At("HEAD"), cancellable = true)
     private static void isKeyDown(Window window, int key, CallbackInfoReturnable<Boolean> cir) {
+    private static void isKeyDown(int key, CallbackInfoReturnable<Boolean> cir) {
         if (isPatchingAsyncThreadCrash() && !RenderSystem.isOnRenderThread()) {
             cir.setReturnValue(false);
         }

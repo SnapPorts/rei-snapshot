@@ -154,6 +154,9 @@ public class RoughlyEnoughItemsCoreClient {
                 builder.withParameter(SlotDisplayContext.FUEL_VALUES, connection.fuelValues());
             }
             return builder.create(SlotDisplayContext.CONTEXT);
+            return ContextMap.builder()
+                    .set(SlotDisplayContext.REGISTRIES, Internals.getRegistryAccess())
+                    .buildAndValidate(SlotDisplayContext.CONTEXT);
         }, "slotDisplayContext");
         EmptyEntryDefinition.EmptyRenderer emptyEntryRenderer = new EmptyEntryDefinition.EmptyRenderer();
         ClientInternals.attachInstance((Supplier<EntryRenderer<?>>) () -> emptyEntryRenderer, "emptyEntryRenderer");

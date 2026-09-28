@@ -182,6 +182,7 @@ public class CreditsEntryListWidget extends UpdatedListWidget<CreditsEntryListWi
                 Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
                 try {
                     Util.getPlatform().openUri(new URI(link));
+                    com.mojang.blaze3d.Blaze3D.openUri(new URI(link));
                     return true;
                 } catch (URISyntaxException e) {
                     e.printStackTrace();

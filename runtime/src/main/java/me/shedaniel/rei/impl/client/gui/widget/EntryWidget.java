@@ -691,6 +691,7 @@ public class EntryWidget extends Slot implements DraggableStackProviderWidget {
         
         if (interactableFavorites && ConfigObject.getInstance().isFavoritesEnabled() && !getCurrentEntry().isEmpty()) {
             if (ConfigObject.getInstance().getFavoriteKeyCode().matchesKey(event.key(), event.scancode())) {
+            if (ConfigObject.getInstance().getFavoriteKeyCode().matchesKey(event.key(), event.keycode())) {
                 FavoriteEntry favoriteEntry = asFavoriteEntry();
                 if (favoriteEntry != null) {
                     if (reverseFavoritesAction()) {
@@ -703,8 +704,10 @@ public class EntryWidget extends Slot implements DraggableStackProviderWidget {
             }
         }
         if (ConfigObject.getInstance().getRecipeKeybind().matchesKey(event.key(), event.scancode()))
+        if (ConfigObject.getInstance().getRecipeKeybind().matchesKey(event.key(), event.keycode()))
             return ViewSearchBuilder.builder().addRecipesFor(getCurrentEntry()).open();
         else if (ConfigObject.getInstance().getUsageKeybind().matchesKey(event.key(), event.scancode()))
+        else if (ConfigObject.getInstance().getUsageKeybind().matchesKey(event.key(), event.keycode()))
             return ViewSearchBuilder.builder().addUsagesFor(getCurrentEntry()).open();
         return false;
     }

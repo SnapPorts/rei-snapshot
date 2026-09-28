@@ -388,6 +388,7 @@ public abstract class ScreenOverlayImpl extends ScreenOverlay {
                     return true;
         }
         if (ConfigObject.getInstance().getHideKeybind().matchesKey(event.key(), event.scancode())) {
+        if (ConfigObject.getInstance().getHideKeybind().matchesKey(event.key(), event.keycode())) {
             REIRuntime.getInstance().toggleOverlayVisible();
             return true;
         }
@@ -395,10 +396,13 @@ public abstract class ScreenOverlayImpl extends ScreenOverlay {
         if (stack != null && !stack.isEmpty()) {
             stack = stack.copy();
             if (ConfigObject.getInstance().getRecipeKeybind().matchesKey(event.key(), event.scancode())) {
+            if (ConfigObject.getInstance().getRecipeKeybind().matchesKey(event.key(), event.keycode())) {
                 return ViewSearchBuilder.builder().addRecipesFor(stack).open();
             } else if (ConfigObject.getInstance().getUsageKeybind().matchesKey(event.key(), event.scancode())) {
+            } else if (ConfigObject.getInstance().getUsageKeybind().matchesKey(event.key(), event.keycode())) {
                 return ViewSearchBuilder.builder().addUsagesFor(stack).open();
             } else if (ConfigObject.getInstance().getFavoriteKeyCode().matchesKey(event.key(), event.scancode())) {
+            } else if (ConfigObject.getInstance().getFavoriteKeyCode().matchesKey(event.key(), event.keycode())) {
                 FavoriteEntry favoriteEntry = FavoriteEntry.fromEntryStack(stack);
                 ConfigObject.getInstance().getFavoriteEntries().add(favoriteEntry);
                 return true;
@@ -407,6 +411,7 @@ public abstract class ScreenOverlayImpl extends ScreenOverlay {
         if (!REIRuntime.getInstance().isOverlayVisible())
             return false;
         if (ConfigObject.getInstance().getFocusSearchFieldKeybind().matchesKey(event.key(), event.scancode())) {
+        if (ConfigObject.getInstance().getFocusSearchFieldKeybind().matchesKey(event.key(), event.keycode())) {
             REIRuntimeImpl.getSearchField().setFocused(true);
             setFocused(REIRuntimeImpl.getSearchField());
             REIRuntimeImpl.getSearchField().keybindFocusTime = System.currentTimeMillis();

@@ -288,6 +288,7 @@ public class DisplayHistoryWidget extends WidgetWithBounds implements DraggableC
         }
         
         if (ConfigObject.getInstance().getFavoriteKeyCode().matchesKey(event.key(), event.scancode())) {
+        if (ConfigObject.getInstance().getFavoriteKeyCode().matchesKey(event.key(), event.keycode())) {
             Point mouse = PointHelper.ofMouse();
             
             if (containsMouse(mouse)) {
